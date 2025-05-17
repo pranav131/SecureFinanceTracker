@@ -1,6 +1,13 @@
 using SecureFinanceTracker.Application;
 using SecureFinanceTracker.Infrastructure;
+using SecureFinanceTracker.Application.Common.Models;
+using SecureFinanceTracker.Application.Common.Interfaces;
+using SecureFinanceTracker.Infrastructure.Authentication;
+using SecureFinanceTracker.Application.Auth.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,10 +17,32 @@ builder.Services.AddOpenApi();
 builder.Services.AddApplicationServices(); // custom DI setup
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddControllers();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+
+var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
+builder.Services.AddAuthentication( options => {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer(options => {
-        // JWT config here
+        options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = jwtSettings.Issuer,
+
+        ValidateAudience = true,
+        ValidAudience = jwtSettings.Audience,
+
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero, // No leeway for expiration
+
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+    };
     });
+builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 
 var app = builder.Build();
 
@@ -24,6 +53,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 
 var summaries = new[]
 {
