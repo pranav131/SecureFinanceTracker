@@ -10,7 +10,7 @@ public static class DependencyInjection
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         // Register all MediatR handlers in this assembly
-        services.AddMediatR(Assembly.GetExecutingAssembly());
+        services.AddMediatR(typeof(DependencyInjection).Assembly);
 
         // Register all AutoMapper profiles in this assembly
         services.AddAutoMapper(Assembly.GetExecutingAssembly());

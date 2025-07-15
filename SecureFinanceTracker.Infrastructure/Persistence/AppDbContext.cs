@@ -13,6 +13,9 @@ public class AppDbContext : DbContext
     public DbSet<User> Users { get; set; }
 
     public DbSet<Category> Categories { get; set; }
+    
+    public DbSet<Budget> Budgets { get; set; }
+
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -24,12 +27,12 @@ public class AppDbContext : DbContext
             entity.Property(t => t.Amount).HasColumnType("decimal(18,2)");
         });
 
-         modelBuilder.Entity<User>(entity =>
-        {
-            entity.HasKey(u => u.Id);
-            entity.HasIndex(u => u.Username).IsUnique();
-            entity.Property(u => u.Username).IsRequired().HasMaxLength(100);
-            entity.Property(u => u.PasswordHash).IsRequired();
-        });
+        modelBuilder.Entity<User>(entity =>
+       {
+           entity.HasKey(u => u.Id);
+           entity.HasIndex(u => u.Username).IsUnique();
+           entity.Property(u => u.Username).IsRequired().HasMaxLength(100);
+           entity.Property(u => u.PasswordHash).IsRequired();
+       });
     }
 }
