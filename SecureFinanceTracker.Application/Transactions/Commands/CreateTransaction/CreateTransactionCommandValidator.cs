@@ -7,7 +7,7 @@ public class CreateTransactionCommandValidator : AbstractValidator<CreateTransac
     public CreateTransactionCommandValidator()
     {
         RuleFor(x => x.Amount).GreaterThan(0);
-        RuleFor(x => x.Category).NotEmpty().MaximumLength(100);
+        RuleFor(x => x.CategoryId).NotEmpty();
         RuleFor(x => x.Date).LessThanOrEqualTo(DateTime.UtcNow);
     }
 }

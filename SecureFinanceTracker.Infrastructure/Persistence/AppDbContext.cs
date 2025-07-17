@@ -24,16 +24,21 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Transaction>(entity =>
         {
             entity.HasKey(t => t.Id);
-            entity.Property(t => t.Category).IsRequired().HasMaxLength(100);
+
             entity.Property(t => t.Amount).HasColumnType("decimal(18,2)");
+
+            entity.HasOne(t => t.Category)
+                .WithMany()
+                .HasForeignKey(t => t.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<User>(entity =>
-       {
+        {
            entity.HasKey(u => u.Id);
            entity.HasIndex(u => u.Username).IsUnique();
            entity.Property(u => u.Username).IsRequired().HasMaxLength(100);
            entity.Property(u => u.PasswordHash).IsRequired();
-       });
+        });
     }
 }
