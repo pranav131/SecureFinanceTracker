@@ -16,6 +16,7 @@ public class AppDbContext : DbContext
     
     public DbSet<Budget> Budgets { get; set; }
 
+    public DbSet<RecurringTransaction> RecurringTransactions { get; set; } = null!;
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
