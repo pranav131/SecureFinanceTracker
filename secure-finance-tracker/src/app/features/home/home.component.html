@@ -1,0 +1,24 @@
+<mat-toolbar color="primary" class="navbar">
+  <span class="title">Secure Personal Finance Tracker</span>
+  <span class="spacer"></span>
+  <button mat-button routerLink="/auth/login">Login</button>
+  <button mat-raised-button color="accent" routerLink="/auth/register">Register</button>
+</mat-toolbar>
+
+<div class="home-container">
+  <h1>Take Control of Your Finances</h1>
+  <p class="intro">
+    Secure Personal Finance Tracker helps you manage transactions, budgets, and financial reports with ease.
+  </p>
+
+  <div class="carousel">
+    <mat-card class="feature-card" *ngFor="let feature of features; let i = index"
+              [class.active]="i === currentIndex"
+              [style.background-image]="'url(' + feature.image + ')'">
+      <div class="overlay">
+        <h2>{{ feature.title }}</h2>
+        <p>{{ feature.description }}</p>
+      </div>
+    </mat-card>
+  </div>
+</div>
